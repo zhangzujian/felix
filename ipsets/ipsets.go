@@ -570,6 +570,8 @@ func (s *IPSets) tryUpdates() error {
 		return nil
 	}
 
+	s.logCxt.Warning("Exec ipset restore")
+
 	// Set up an ipset restore session.
 	countNumIPSetCalls.Inc()
 	cmd := s.newCmd("ipset", "restore")
