@@ -19,7 +19,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"reflect"
 	"strings"
 	"time"
 
@@ -129,7 +128,9 @@ func (s *IPSets) AddOrReplaceIPSet(setMetadata IPSetMetadata, members []string) 
 		pendingAdds:      set.New(),
 		pendingDeletions: set.New(),
 	}
-	if !reflect.DeepEqual(ipSet, s.ipSetIDToIPSet[setID]) {
+
+	if oldSet := s.ipSetIDToIPSet[setID]; oldSet == nil || !ipSet.pendingReplace.Equals(oldSet.members) {
+		// kube-ovn calls AddOrReplaceIPSet() only, so it's safe
 		s.ipSetIDToIPSet[setID] = ipSet
 		s.mainIPSetNameToIPSet[ipSet.MainIPSetName] = ipSet
 
