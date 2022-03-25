@@ -19,6 +19,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"reflect"
 	"strings"
 	"time"
 
@@ -128,11 +129,13 @@ func (s *IPSets) AddOrReplaceIPSet(setMetadata IPSetMetadata, members []string) 
 		pendingAdds:      set.New(),
 		pendingDeletions: set.New(),
 	}
-	s.ipSetIDToIPSet[setID] = ipSet
-	s.mainIPSetNameToIPSet[ipSet.MainIPSetName] = ipSet
+	if !reflect.DeepEqual(ipset, s.ipSetIDToIPSet[setID]) {
+		s.ipSetIDToIPSet[setID] = ipSet
+		s.mainIPSetNameToIPSet[ipSet.MainIPSetName] = ipSet
 
-	// Mark IP set dirty so ApplyUpdates() will rewrite it.
-	s.dirtyIPSetIDs.Add(setID)
+		// Mark IP set dirty so ApplyUpdates() will rewrite it.
+		s.dirtyIPSetIDs.Add(setID)
+	}
 
 	// The IP set may have been previously queued for deletion, undo that.
 	s.pendingIPSetDeletions.Discard(ipSet.MainIPSetName)
