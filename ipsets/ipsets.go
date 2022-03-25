@@ -129,7 +129,7 @@ func (s *IPSets) AddOrReplaceIPSet(setMetadata IPSetMetadata, members []string) 
 		pendingAdds:      set.New(),
 		pendingDeletions: set.New(),
 	}
-	if !reflect.DeepEqual(ipset, s.ipSetIDToIPSet[setID]) {
+	if !reflect.DeepEqual(ipSet, s.ipSetIDToIPSet[setID]) {
 		s.ipSetIDToIPSet[setID] = ipSet
 		s.mainIPSetNameToIPSet[ipSet.MainIPSetName] = ipSet
 
